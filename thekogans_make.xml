@@ -1,0 +1,57 @@
+<thekogans_make organization = "thekogans"
+                project = "surface"
+                project_type = "library"
+                major_version = "0"
+                minor_version = "1"
+                patch_version = "0"
+                guid = "68af70ca92e6e4b43d92bbeeb5fb2b90"
+                schema_version = "2">
+  <dependencies>
+    <dependency organization = "thekogans"
+                name = "util"/>
+    <toolchain organization = "thekogans"
+               name = "freetype"/>
+    <choose>
+      <when condition = "$(TOOLCHAIN_OS) == 'Windows'">
+      </when>
+      <when condition = "$(TOOLCHAIN_OS) == 'OSX'">
+        <framework>Cocoa</framework>
+        <framework>CoreGraphics</framework>
+      </when>
+    </choose>
+  </dependencies>
+  <cpp_flags>
+    <cpp_flag>-mavx2</cpp_flag>
+  </cpp_flags>
+  <cpp_headers prefix = "include"
+               install = "yes">
+    <cpp_header>$(organization)/$(project_directory)/COLOR.h</cpp_header>
+    <cpp_header>$(organization)/$(project_directory)/Config.h</cpp_header>
+    <cpp_header>$(organization)/$(project_directory)/Glyph.h</cpp_header>
+    <cpp_header>$(organization)/$(project_directory)/PIXEL.h</cpp_header>
+    <cpp_header>$(organization)/$(project_directory)/Surface.h</cpp_header>
+    <cpp_header>$(organization)/$(project_directory)/Version.h</cpp_header>
+  </cpp_headers>
+  <cpp_sources prefix = "src">
+    <cpp_source>Glyph.cpp</cpp_source>
+    <cpp_source>Surface.cpp</cpp_source>
+    <cpp_source>PIXEL.cpp</cpp_source>
+    <cpp_source>Version.cpp</cpp_source>
+  </cpp_sources>
+  <choose>
+    <when condition = "$(TOOLCHAIN_OS) == 'Windows'">
+    </when>
+    <when condition = "$(TOOLCHAIN_OS) == 'OSX'">
+      <objective_cpp_flags>
+        <objective_cpp_flag>-mavx2</objective_cpp_flag>
+      </objective_cpp_flags>
+      <objective_cpp_headers prefix = "include"
+                             install = "yes">
+        <objective_cpp_header>$(organization)/$(project_directory)/osx/SurfaceView.h</objective_cpp_header>
+      </objective_cpp_headers>
+      <objective_cpp_sources prefix = "src">
+        <objective_cpp_source>osx/SurfaceView.mm</objective_cpp_source>
+      </objective_cpp_sources>
+    </when>
+  </choose>
+</thekogans_make>
