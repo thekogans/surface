@@ -63,8 +63,8 @@ namespace thekogans {
             THEKOGANS_UTIL_DECLARE_REF_COUNTED_POINTERS (GlyphCache)
 
         private:
-            // 95 printable ASCII chars (32 to 126).
-            static constexpr int ASCII_START = 32;
+                // 95 printable ASCII chars (32 to 126).
+                static constexpr int ASCII_START = 32;
             static constexpr int ASCII_END = 126;
             static constexpr int NUM_CHARS = ASCII_END - ASCII_START + 1;
 
