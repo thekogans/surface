@@ -57,37 +57,6 @@ namespace thekogans {
             }
         }
 
-        // Blends an 8-bit FreeType mask onto a 32-bit RGBA software image
-        void Glyph::Draw (
-                int targetX,
-                int targetY,
-                COLOR color,
-                Surface::SharedPtr surface) const {
-            for (unsigned int y = 0; y < rows; ++y) {
-                int pixelY = targetY + y;
-                // Skip rows outside image bounds
-                if (pixelY >= 0 && pixelY < surface->rectangle.extents.height) {
-                    for (unsigned int x = 0; x < width; ++x) {
-                        int pixelX = targetX + x;
-                        // Skip columns outside image bounds
-                        if (pixelX >= 0 && pixelX < surface->rectangle.extents.width) {
-                            util::ui8 glyphA = alpha_mask[y * width + x];
-                            // Fully transparent, skip blending
-                            if (glyphA != 0) {
-                                util::ui32 alpha = (glyphA * color.a) / 255;
-                                util::ui32 inv_alpha = 255 - alpha;
-                                PIXEL *bg = surface->GetBufferAtPoint (util::Point (pixelX, pixelY));
-                                bg->r = (color.r * alpha + bg->r * inv_alpha) / 255;
-                                bg->g = (color.g * alpha + bg->g * inv_alpha) / 255;
-                                bg->b = (color.b * alpha + bg->b * inv_alpha) / 255;
-                                bg->a = alpha + (bg->a * inv_alpha) / 255;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
         GlyphCache::GlyphCache (
                 const std::string &fontPath,
                 int fontSize) {
@@ -131,28 +100,6 @@ namespace thekogans {
                     FT_Done_Face (face);
                 }
                 FT_Done_FreeType (library);
-            }
-        }
-
-        void GlyphCache::DrawText (
-                const std::string &text,
-                int startX,
-                int startY,
-                COLOR color,
-                Surface::SharedPtr surface) {
-            int penX = startX;
-            int penY = startY;
-            char prev_char = 0;
-            for (char c : text) {
-                Glyph::SharedPtr glyph = GetGlyph (c);
-                if (glyph != nullptr) {
-                    penX += GetKerning (prev_char, c).x;
-                    int glyphX = penX + glyph->bitmap_left;
-                    int glyphY = penY - glyph->bitmap_top;
-                    glyph->Draw (glyphX, glyphY, color, surface);
-                    penX += glyph->advance.x;
-                    prev_char = c;
-                }
             }
         }
 

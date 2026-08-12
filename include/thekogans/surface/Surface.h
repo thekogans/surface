@@ -101,7 +101,7 @@ namespace thekogans {
             };
             /// \brief
             /// The surface frame buffer. The only muttable member.
-            PIXELBuffer::SharedPtr buffer;
+            typename PIXELBuffer::SharedPtr buffer;
 
             Surface (const util::Rectangle::Extents &extents) :
                     rectangle (util::Point (), extents),
@@ -113,7 +113,7 @@ namespace thekogans {
             }
             Surface (
                     const util::Rectangle &rectangle_,
-                    PIXELBuffer::SharedPtr buffer_) :
+                    typename PIXELBuffer::SharedPtr buffer_) :
                     rectangle (rectangle_),
                     buffer (buffer_) {
                 if (buffer == nullptr ||
