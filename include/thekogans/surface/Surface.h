@@ -27,7 +27,10 @@ namespace thekogans {
         // x = 0, y = 0: upper left corner
         // x = width - 1, y = height - 1: lower right corner
 
-        struct _LIB_THEKOGANS_SURFACE_DECL Surface : public util::RefCounted {
+        template<typename T>
+        struct Surface : public util::RefCounted {
+            using PixelType = T;
+
             THEKOGANS_UTIL_DECLARE_REF_COUNTED_POINTERS (Surface)
             THEKOGANS_UTIL_DECLARE_STD_ALLOCATOR_FUNCTIONS
 
@@ -48,11 +51,11 @@ namespace thekogans {
                 THEKOGANS_UTIL_DECLARE_REF_COUNTED_POINTERS (PIXELBuffer)
 
                 util::Rectangle::Extents extents;
-                PIXEL *buffer;
+                PixelType *buffer;
 
                 PIXELBuffer (const util::Rectangle::Extents &extents_) :
                         extents (extents_),
-                        buffer (new PIXEL[extents.width * extents.height]) {
+                        buffer (new PixelType[extents.width * extents.height]) {
                     if (extents.IsDegenerate ()) {
                         THEKOGANS_UTIL_THROW_ERROR_CODE_EXCEPTION (
                             THEKOGANS_UTIL_OS_ERROR_CODE_EINVAL);
@@ -62,7 +65,7 @@ namespace thekogans {
                     delete [] buffer;
                 }
 
-                inline PIXEL *get () {
+                inline PixelType *get () {
                     return buffer;
                 }
 
@@ -70,27 +73,27 @@ namespace thekogans {
                 /// const (rvalue) element accessor.
                 /// \param[in] index Element index to return.
                 /// \return reference to element at index.
-                inline const PIXEL &operator [] (std::size_t index) const {
+                inline const PixelType &operator [] (std::size_t index) const {
                     return buffer[index];
                 }
                 /// \brief
                 /// lvalue element accessor.
                 /// \param[in] index Element index to return.
                 /// \return Reference to element at index.
-                inline PIXEL &operator [] (std::size_t index) {
+                inline PixelType &operator [] (std::size_t index) {
                     return buffer[index];
                 }
 
                 /// \brief
                 /// Implicit conversion to const T *.
                 /// \return const T *.
-                inline operator const PIXEL * () const {
+                inline operator const PixelType * () const {
                     return buffer;
                 }
                 /// \brief
                 /// Implicit conversion to T *.
                 /// \return T *.
-                inline operator PIXEL * () {
+                inline operator PixelType * () {
                     return buffer;
                 }
 
@@ -99,56 +102,47 @@ namespace thekogans {
             /// \brief
             /// The surface frame buffer. The only muttable member.
             PIXELBuffer::SharedPtr buffer;
-            /// \brief
-            /// Represents the surface pixel format. This is the COLOR to PIXEL
-            /// mapper the surface uses.
-            //const PixelFormat *pixelFormat;
 
+            Surface (const util::Rectangle::Extents &extents) :
+                    rectangle (util::Point (), extents),
+                    buffer (new PIXELBuffer (extents)) {
+                if (extents.IsDegenerate ()) {
+                    THEKOGANS_UTIL_THROW_ERROR_CODE_EXCEPTION (
+                        THEKOGANS_UTIL_OS_ERROR_CODE_EINVAL);
+                }
+            }
             Surface (
-                const util::Rectangle::Extents &extents/*,
-                    const PixelFormat *pixelFormat_ = GetPixelFormat (PIXEL_FORMAT_ABGR)*/);
-            Surface (
-                const util::Rectangle &rectangle_,
-                PIXELBuffer::SharedPtr buffer_/*,
-                    const PixelFormat *pixelFormat_ = GetPixelFormat (PIXEL_FORMAT_ABGR)*/);
+                    const util::Rectangle &rectangle_,
+                    PIXELBuffer::SharedPtr buffer_) :
+                    rectangle (rectangle_),
+                    buffer (buffer_) {
+                if (buffer == nullptr ||
+                        !rectangle.IsInside (util::Rectangle (util::Point (), buffer->extents))) {
+                    THEKOGANS_UTIL_THROW_ERROR_CODE_EXCEPTION (
+                        THEKOGANS_UTIL_OS_ERROR_CODE_EINVAL);
+                }
+            }
 
-            inline PIXEL *GetBufferAtPoint (const util::Point &point) {
+            inline PixelType *GetBufferAtPoint (const util::Point &point) {
                 return buffer->get () + (rectangle.origin.y + point.y) * buffer->extents.width +
                     rectangle.origin.x + point.x;
             }
 
-            inline PIXEL *GetBufferAtPointSafe (const util::Point &point) {
+            inline PixelType *GetBufferAtPointSafe (const util::Point &point) {
                 return point.InRectangle (rectangle) ? GetBufferAtPoint (point) : nullptr;
             }
 
-#if 0
-            inline PIXEL MakePIXEL (
-                    util::ui32 alpha,
-                    util::ui32 red,
-                    util::ui32 green,
-                    util::ui32 blue) const {
-                return pixelFormat->MakePIXEL (alpha, red, green, blue);
-            }
-            inline PIXEL MakePIXEL (COLOR color) const {
-                return pixelFormat->MakePIXEL (color);
-            }
-
-            inline util::ui8 GetPIXELAlpha (PIXEL pixel) const {
-                return pixelFormat->GetPIXELAlpha (pixel);
-            }
-            inline util::ui8 GetPIXELRed (PIXEL pixel) const {
-                return pixelFormat->GetPIXELRed (pixel);
-            }
-            inline util::ui8 GetPIXELGreen (PIXEL pixel) const {
-                return pixelFormat->GetPIXELGreen (pixel);
-            }
-            inline util::ui8 GetPIXELBlue (PIXEL pixel) const {
-                return pixelFormat->GetPIXELBlue (pixel);
-            }
-#endif
-
             THEKOGANS_UTIL_DISALLOW_COPY_AND_ASSIGN (Surface)
         };
+
+        // kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big
+        using SurfaceRGBA = Surface<PIXEL_RGBA>;
+        // kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Big
+        using SurfaceARGB = Surface<PIXEL_ARGB>;
+        // kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Little
+        using SurfaceBGRA = Surface<PIXEL_BGRA>;
+        // kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Little
+        using SurfaceABGR = Surface<PIXEL_ABGR>;
 
     } // namespace surface
 } // namespace thekogans

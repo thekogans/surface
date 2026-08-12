@@ -6,7 +6,7 @@
 #include "thekogans/surface/Surface.h"
 
 @interface SurfaceView : NSView {
-    thekogans::surface::Surface::SharedPtr surface;
+    thekogans::surface::SurfaceRGBA::SharedPtr surface;
 }
 
 - (CGFloat)backingScaleFactor;

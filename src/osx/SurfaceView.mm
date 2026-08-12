@@ -20,7 +20,7 @@
 - (void)updateBuffersForSize: (NSSize)size {
     CGFloat scaleFactor = [self backingScaleFactor];
     surface.Reset (
-        new thekogans::surface::Surface (
+        new thekogans::surface::SurfaceRGBA (
             thekogans::util::Rectangle::Extents (
                 static_cast<size_t> (size.width * scaleFactor),
                 static_cast<size_t> (size.height * scaleFactor))));
@@ -50,7 +50,7 @@
             8,
             surface->buffer->extents.width * 4,
             colorSpace,
-            kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big );
+            kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
         CGImageRef image = CGBitmapContextCreateImage (bitmapContext);
         CGContextRef currentContext = (CGContextRef)[[NSGraphicsContext currentContext] CGContext];
         CGRect destRect = CGRectMake (0, 0, self.bounds.size.width, self.bounds.size.height);

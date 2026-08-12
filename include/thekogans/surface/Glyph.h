@@ -50,11 +50,12 @@ namespace thekogans {
                 int bitmap_top_,
                 const FT_Vector &advance_);
 
+            template<typename T>
             void Draw (
                 int startX,
                 int startY,
                 COLOR color,
-                Surface::SharedPtr surface) const;
+                Surface<T>::SharedPtr surface) const;
 
             THEKOGANS_UTIL_DISALLOW_COPY_AND_ASSIGN (Glyph)
         };
@@ -63,8 +64,8 @@ namespace thekogans {
             THEKOGANS_UTIL_DECLARE_REF_COUNTED_POINTERS (GlyphCache)
 
         private:
-                // 95 printable ASCII chars (32 to 126).
-                static constexpr int ASCII_START = 32;
+            // 95 printable ASCII chars (32 to 126).
+            static constexpr int ASCII_START = 32;
             static constexpr int ASCII_END = 126;
             static constexpr int NUM_CHARS = ASCII_END - ASCII_START + 1;
 
@@ -82,12 +83,13 @@ namespace thekogans {
                 const std::string &fontPath,
                 int fontSize);
 
+            template<typename T>
             void DrawText (
                 const std::string &text,
                 int startX,
                 int startY,
                 COLOR color,
-                Surface::SharedPtr surface);
+                Surface<T>::SharedPtr surface);
             util::Rectangle GetTextBounds (
                 const std::string &text,
                 int startX = 0,
