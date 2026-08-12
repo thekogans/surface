@@ -67,14 +67,14 @@ namespace thekogans {
                                 util::ui8 glyphA = alpha_mask[y * width + x];
                                 // Fully transparent, skip blending
                                 if (glyphA != 0) {
-                                    util::ui32 alpha = (glyphA * color.a) / 255;
+                                    util::ui32 alpha = (glyphA * color.a + 127) / 255;
                                     util::ui32 inv_alpha = 255 - alpha;
                                     typename Surface<T>::PixelType *bg =
                                         surface->GetBufferAtPoint (util::Point (pixelX, pixelY));
-                                    bg->r = (color.r * alpha + bg->r * inv_alpha) / 255;
-                                    bg->g = (color.g * alpha + bg->g * inv_alpha) / 255;
-                                    bg->b = (color.b * alpha + bg->b * inv_alpha) / 255;
-                                    bg->a = alpha + (bg->a * inv_alpha) / 255;
+                                    bg->r = (color.r * alpha + bg->r * inv_alpha + 127) / 255;
+                                    bg->g = (color.g * alpha + bg->g * inv_alpha + 127) / 255;
+                                    bg->b = (color.b * alpha + bg->b * inv_alpha + 127) / 255;
+                                    bg->a = alpha + (bg->a * inv_alpha + 127) / 255;
                                 }
                             }
                         }
