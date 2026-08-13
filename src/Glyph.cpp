@@ -27,12 +27,11 @@ namespace thekogans {
 
         Glyph::Glyph (
                 const FT_Bitmap &bitmap,
-                int bitmap_left,
-                int bitmap_top,
-                const FT_Vector &advance_) :
+                const util::Point &origin_,
+                const util::Point &advance_) :
                 extents (bitmap.width, bitmap.rows),
-                origin (bitmap_left, bitmap_top),
-                advance {advance_.x >> 6, advance_.y >> 6} {
+                origin (origin_),
+                advance (advance_) {
             if (!extents.IsDegenerate ()) {
                 alphaBuffer.resize (extents.GetArea ());
                 for (int y = 0; y < extents.height; ++y) {
@@ -73,9 +72,8 @@ namespace thekogans {
                             FT_GlyphSlot glyph = face->glyph;
                             glyphs[c - ASCII_START] = new Glyph (
                                 glyph->bitmap,
-                                glyph->bitmap_left,
-                                glyph->bitmap_top,
-                                glyph->advance);
+                                util::Point (glyph->bitmap_left, glyph->bitmap_top),
+                                util::Point (glyph->advance_.x >> 6, glyph->advance_.y >> 6));
                         }
                     }
                     // 2. Pre-compile the 2D Kerning Table matrix

@@ -39,14 +39,13 @@ namespace thekogans {
 
             util::Rectangle::Extents extents;
             util::Point origin;
-            FT_Vector advance;
+            util::Point advance;
             std::vector<util::ui8> alphaBuffer;
 
             Glyph (
                 const FT_Bitmap &bitmap,
-                int bitmap_left,
-                int bitmap_top,
-                const FT_Vector &advance_);
+                const util::Point &origin_,
+                const util::Point &advance_);
 
             template<typename T>
             void Draw (
