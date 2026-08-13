@@ -35,10 +35,10 @@ namespace thekogans {
             util::ui8 b;
 
             PIXEL_ARGB (
-                util::ui8 a_ = 255,
                 util::ui8 r_ = 0,
                 util::ui8 g_ = 0,
-                util::ui8 b_ = 0) :
+                util::ui8 b_ = 0,
+                util::ui8 a_ = 255) :
                 a (a_),
                 r (r_),
                 g (g_),
@@ -53,9 +53,9 @@ namespace thekogans {
             util::ui8 a;
 
             PIXEL_BGRA (
-                util::ui8 b_ = 0,
-                util::ui8 g_ = 0,
                 util::ui8 r_ = 0,
+                util::ui8 g_ = 0,
+                util::ui8 b_ = 0,
                 util::ui8 a_ = 255) :
                 b (b_),
                 g (g_),
@@ -71,10 +71,10 @@ namespace thekogans {
             util::ui8 r;
 
             PIXEL_ABGR (
-                util::ui8 a_ = 255,
-                util::ui8 b_ = 0,
+                util::ui8 r_ = 0,
                 util::ui8 g_ = 0,
-                util::ui8 r_ = 0) :
+                util::ui8 b_ = 0,
+                util::ui8 a_ = 255) :
                 a (a_),
                 b (b_),
                 g (g_),

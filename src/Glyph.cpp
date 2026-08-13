@@ -59,7 +59,8 @@ namespace thekogans {
 
         GlyphCache::GlyphCache (
                 const std::string &fontPath,
-                int fontSize) {
+                int fontSize,
+                bool bold) {
             // Zero out the kerning table initially
             std::memset (kerningTable, 0, sizeof (kerningTable));
             FT_Library library;

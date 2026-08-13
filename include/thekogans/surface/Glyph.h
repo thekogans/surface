@@ -106,7 +106,8 @@ namespace thekogans {
         public:
             GlyphCache (
                 const std::string &fontPath,
-                int fontSize);
+                int fontSize,
+                bool bold = false);
 
             template<typename T>
             void DrawText (
