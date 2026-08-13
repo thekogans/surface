@@ -27,24 +27,22 @@ namespace thekogans {
 
         Glyph::Glyph (
                 const FT_Bitmap &bitmap,
-                int bitmap_left_,
-                int bitmap_top_,
+                int bitmap_left,
+                int bitmap_top,
                 const FT_Vector &advance_) :
-                width (bitmap.width),
-                rows (bitmap.rows),
-                bitmap_left (bitmap_left_),
-                bitmap_top (bitmap_top_),
+                extents (bitmap.width, bitmap.rows),
+                origin (bitmap_left, bitmap_top),
                 advance {advance_.x >> 6, advance_.y >> 6} {
-            if (width > 0 && rows > 0) {
-                alpha_mask.resize (width * rows);
-                for (int row = 0; row < rows; ++row) {
+            if (!extents.IsDegenerate ()) {
+                alphaBuffer.resize (extents.GetArea ());
+                for (int y = 0; y < extents.height; ++y) {
                     std::memcpy (
-                        &alpha_mask[row * width],
-                        &bitmap.buffer[row * bitmap.pitch], width);
+                        &alphaBuffer[y * extents.width],
+                        &bitmap.buffer[y * bitmap.pitch], extents.width);
                 }
                 // for (unsigned int y = 0; y < rows; ++y) {
                 //     for (unsigned int x = 0; x < width; ++x) {
-                //         unsigned char pixel = alpha_mask[y * width + x];
+                //         unsigned char pixel = alphaBuffer[y * width + x];
                 //         // Map 0-255 opacity to character density
                 //         if (pixel > 200) std::cout << "#";
                 //         else if (pixel > 120) std::cout << "%";
@@ -117,9 +115,9 @@ namespace thekogans {
                 Glyph::SharedPtr glyph = GetGlyph (c);
                 if (glyph != nullptr) {
                     penX += GetKerning (prev_char, c).x;
-                    int glyphY = startY - glyph->bitmap_top;
-                    min_y = std::min (min_y, glyphY);
-                    max_y = std::max (max_y, glyphY + glyph->rows);
+                    int glyphY = startY - glyph->origin.y;
+                    min_y = util::MIN (min_y, glyphY);
+                    max_y = util::MAX (max_y, glyphY + glyph->extents.height);
                     penX += glyph->advance.x;
                     prev_char = c;
                 }

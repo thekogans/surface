@@ -37,17 +37,15 @@ namespace thekogans {
             THEKOGANS_UTIL_DECLARE_REF_COUNTED_POINTERS (Glyph)
             THEKOGANS_UTIL_DECLARE_STD_ALLOCATOR_FUNCTIONS
 
-            int width;
-            int rows;
-            int bitmap_left;
-            int bitmap_top;
+            util::Rectangle::Extents extents;
+            util::Point origin;
             FT_Vector advance;
-            std::vector<util::ui8> alpha_mask;
+            std::vector<util::ui8> alphaBuffer;
 
             Glyph (
                 const FT_Bitmap &bitmap,
-                int bitmap_left_,
-                int bitmap_top_,
+                int bitmap_left,
+                int bitmap_top,
                 const FT_Vector &advance_);
 
             template<typename T>
@@ -56,25 +54,25 @@ namespace thekogans {
                     int startY,
                     COLOR color,
                     typename Surface<T>::SharedPtr surface) const {
-                for (unsigned int y = 0; y < rows; ++y) {
+                for (unsigned int y = 0; y < extents.height; ++y) {
                     int pixelY = startY + y;
                     // Skip rows outside image bounds
                     if (pixelY >= 0 && pixelY < surface->rectangle.extents.height) {
-                        for (unsigned int x = 0; x < width; ++x) {
+                        for (unsigned int x = 0; x < extents.width; ++x) {
                             int pixelX = startX + x;
                             // Skip columns outside image bounds
                             if (pixelX >= 0 && pixelX < surface->rectangle.extents.width) {
-                                util::ui8 glyphA = alpha_mask[y * width + x];
+                                util::ui8 glyphA = alphaBuffer[y * extents.width + x];
                                 // Fully transparent, skip blending
                                 if (glyphA != 0) {
                                     util::ui32 alpha = (glyphA * color.a + 127) / 255;
-                                    util::ui32 inv_alpha = 255 - alpha;
+                                    util::ui32 inverseAlpha = 255 - alpha;
                                     typename Surface<T>::PixelType *bg =
                                         surface->GetBufferAtPoint (util::Point (pixelX, pixelY));
-                                    bg->r = (color.r * alpha + bg->r * inv_alpha + 127) / 255;
-                                    bg->g = (color.g * alpha + bg->g * inv_alpha + 127) / 255;
-                                    bg->b = (color.b * alpha + bg->b * inv_alpha + 127) / 255;
-                                    bg->a = alpha + (bg->a * inv_alpha + 127) / 255;
+                                    bg->r = (color.r * alpha + bg->r * inverseAlpha + 127) / 255;
+                                    bg->g = (color.g * alpha + bg->g * inverseAlpha + 127) / 255;
+                                    bg->b = (color.b * alpha + bg->b * inverseAlpha + 127) / 255;
+                                    bg->a = alpha + (bg->a * inverseAlpha + 127) / 255;
                                 }
                             }
                         }
@@ -123,8 +121,8 @@ namespace thekogans {
                     Glyph::SharedPtr glyph = GetGlyph (c);
                     if (glyph != nullptr) {
                         penX += GetKerning (prev_char, c).x;
-                        int glyphX = penX + glyph->bitmap_left;
-                        int glyphY = penY - glyph->bitmap_top;
+                        int glyphX = penX + glyph->origin.x;
+                        int glyphY = penY - glyph->origin.y;
                         glyph->Draw<T> (glyphX, glyphY, color, surface);
                         penX += glyph->advance.x;
                         prev_char = c;
