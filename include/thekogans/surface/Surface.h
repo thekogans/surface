@@ -116,7 +116,7 @@ namespace thekogans {
 
             Surface (
                 const util::Rectangle::Extents &extents,
-                const COLOR &clearColor = COLOR (0, 0, 0, 0xff)) :
+                COLOR clearColor = COLOR (0, 0, 0, 0xff)) :
                 rectangle (util::Point (), extents),
                 buffer (new PIXELBuffer (extents, clearColor)) {}
             Surface (
