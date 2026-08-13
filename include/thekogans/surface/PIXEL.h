@@ -25,6 +25,11 @@ namespace thekogans {
                 g (g_),
                 b (b_),
                 a (a_) {}
+            PIXEL_RGBA (COLOR color) :
+                r (color.r),
+                g (color.g),
+                b (color.b),
+                a (color.a) {}
         };
 
         // kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Big
@@ -43,6 +48,11 @@ namespace thekogans {
                 r (r_),
                 g (g_),
                 b (b_) {}
+            PIXEL_ARGB (COLOR color) :
+                a (color.a),
+                r (color.r),
+                g (color.g),
+                b (color.b) {}
         };
 
         // kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Little
@@ -61,6 +71,11 @@ namespace thekogans {
                 g (g_),
                 r (r_),
                 a (a_) {}
+            PIXEL_BGRA (COLOR color) :
+                b (color.b),
+                g (color.g),
+                r (color.r),
+                a (color.a) {}
         };
 
         // kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Little
@@ -79,6 +94,11 @@ namespace thekogans {
                 b (b_),
                 g (g_),
                 r (r_) {}
+            PIXEL_ABGR (COLOR color) :
+                a (color.a),
+                b (color.b),
+                g (color.g),
+                r (color.r) {}
         };
 
     } // namespace surface

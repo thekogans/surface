@@ -1,6 +1,8 @@
 #if !defined (__thekogans_surface_Surface_h)
 #define __thekogans_surface_Surface_h
 
+#include <algorithm>
+#include <string>
 #include "thekogans/util/Types.h"
 #include "thekogans/util/Rectangle.h"
 #include "thekogans/util/Exception.h"
@@ -53,10 +55,15 @@ namespace thekogans {
                 util::Rectangle::Extents extents;
                 PixelType *buffer;
 
-                PIXELBuffer (const util::Rectangle::Extents &extents_) :
+                PIXELBuffer (
+                        const util::Rectangle::Extents &extents_,
+                        const COLOR &clearColor = COLOR (0, 0, 0, 0xff)) :
                         extents (extents_),
-                        buffer (new PixelType[extents.width * extents.height]) {
-                    if (extents.IsDegenerate ()) {
+                        buffer (new PixelType[extents.GetArea ()]) {
+                    if (!extents.IsDegenerate ()) {
+                        std::fill (buffer, buffer + extents.GetArea (), PixelType (clearColor));
+                    }
+                    else {
                         THEKOGANS_UTIL_THROW_ERROR_CODE_EXCEPTION (
                             THEKOGANS_UTIL_OS_ERROR_CODE_EINVAL);
                     }
@@ -103,14 +110,11 @@ namespace thekogans {
             /// The surface frame buffer. The only muttable member.
             typename PIXELBuffer::SharedPtr buffer;
 
-            Surface (const util::Rectangle::Extents &extents) :
-                    rectangle (util::Point (), extents),
-                    buffer (new PIXELBuffer (extents)) {
-                if (extents.IsDegenerate ()) {
-                    THEKOGANS_UTIL_THROW_ERROR_CODE_EXCEPTION (
-                        THEKOGANS_UTIL_OS_ERROR_CODE_EINVAL);
-                }
-            }
+            Surface (
+                const util::Rectangle::Extents &extents,
+                const COLOR &clearColor = COLOR (0, 0, 0, 0xff)) :
+                rectangle (util::Point (), extents),
+                buffer (new PIXELBuffer (extents, clearColor)) {}
             Surface (
                     const util::Rectangle &rectangle_,
                     typename PIXELBuffer::SharedPtr buffer_) :
