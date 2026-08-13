@@ -1,0 +1,19 @@
+<thekogans_make organization = "thekogans"
+                project = "osxtest"
+                project_type = "program"
+                major_version = "0"
+                minor_version = "1"
+                patch_version = "0"
+                guid = "000f5ead4d1109cdf63a55a82148f85a"
+                schema_version = "2">
+  <dependencies>
+    <dependency organization = "thekogans"
+                name = "util"/>
+    <dependency organization = "thekogans"
+                name = "surface"/>
+    <framework>Cocoa</framework>
+  </dependencies>
+  <objective_cpp_sources prefix = "src">
+    <objective_cpp_source>main.mm</objective_cpp_source>
+  </objective_cpp_sources>
+</thekogans_make>

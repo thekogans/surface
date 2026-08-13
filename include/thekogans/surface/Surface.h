@@ -52,12 +52,16 @@ namespace thekogans {
             struct PIXELBuffer : public util::RefCounted {
                 THEKOGANS_UTIL_DECLARE_REF_COUNTED_POINTERS (PIXELBuffer)
 
+                /// \brief
+                /// Buffer width and height (in pixels).
                 util::Rectangle::Extents extents;
+                /// \brief
+                /// Pixel buffer.
                 PixelType *buffer;
 
                 PIXELBuffer (
                         const util::Rectangle::Extents &extents_,
-                        const COLOR &clearColor = COLOR (0, 0, 0, 0xff)) :
+                        COLOR clearColor = COLOR (0, 0, 0, 0xff)) :
                         extents (extents_),
                         buffer (new PixelType[extents.GetArea ()]) {
                     if (!extents.IsDegenerate ()) {
