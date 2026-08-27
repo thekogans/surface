@@ -6,23 +6,31 @@
                 patch_version = "0"
                 guid = "68af70ca92e6e4b43d92bbeeb5fb2b90"
                 schema_version = "2">
+  <features>
+    <if condition = "$(is_package_installed -p:freetype2)">
+      <feature>THEKOGANS_SURFACE_HAVE_FREETYPE2</feature>
+    </if>
+  </features>
   <dependencies>
     <dependency organization = "thekogans"
                 name = "util"/>
-    <toolchain organization = "thekogans"
-               name = "freetype"/>
+    <if condition = "$(have_feature -f:THEKOGANS_SURFACE_HAVE_FREETYPE2)">
+      <package name = "freetype2"/>
+    </if>
     <choose>
       <when condition = "$(TOOLCHAIN_OS) == 'Windows'">
       </when>
       <when condition = "$(TOOLCHAIN_OS) == 'OSX'">
-        <framework>Cocoa</framework>
-        <framework>CoreGraphics</framework>
+        <framework name = "Cocoa"/>
+        <framework name = "CoreGraphics"/>
       </when>
     </choose>
   </dependencies>
-  <cpp_flags>
-    <cpp_flag>-mavx2</cpp_flag>
-  </cpp_flags>
+  <if condition = "$(TOOLCHAIN_ARCH) == 'x86_64'">
+    <cpp_flags>
+      <cpp_flag>-mavx2</cpp_flag>
+    </cpp_flags>
+  </if>
   <cpp_headers prefix = "include"
                install = "yes">
     <cpp_header>$(organization)/$(project_directory)/COLOR.h</cpp_header>
@@ -42,9 +50,11 @@
     <when condition = "$(TOOLCHAIN_OS) == 'Windows'">
     </when>
     <when condition = "$(TOOLCHAIN_OS) == 'OSX'">
-      <objective_cpp_flags>
-        <objective_cpp_flag>-mavx2</objective_cpp_flag>
-      </objective_cpp_flags>
+      <if condition = "$(TOOLCHAIN_ARCH) == 'x86_64'">
+        <objective_cpp_flags>
+          <objective_cpp_flag>-mavx2</objective_cpp_flag>
+        </objective_cpp_flags>
+      </if>
       <objective_cpp_headers prefix = "include"
                              install = "yes">
         <objective_cpp_header>$(organization)/$(project_directory)/osx/SurfaceView.h</objective_cpp_header>

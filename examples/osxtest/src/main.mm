@@ -15,7 +15,7 @@ using namespace thekogans;
 - (instancetype)initWithFrame: (NSRect)frame {
     if (self = [super initWithFrame: frame]) {
         glyphCache.Reset (new surface::GlyphCache (
-            "/Users/boris/development/thekogans/mex/tests/FantasticPete3.03.ttf", 64 * [self backingScaleFactor]));
+            "/System/Library/Fonts/Monaco.ttf", 11 * [self backingScaleFactor]));
     }
     return self;
 }
@@ -23,7 +23,7 @@ using namespace thekogans;
 - (void)redraw {
     if (glyphCache != nullptr) {
         glyphCache->DrawText<surface::SurfaceRGBA::PixelType> (
-            "E   F   G",
+            "~/development/thekogans/surface/examples/osxtest",
             50, 300,
             surface::COLOR (0xff, 0xff, 0xff, 0xff),
             surface);
@@ -33,14 +33,16 @@ using namespace thekogans;
 
 // Boilerplate initialization code to construct window interfaces without Storyboards
 @interface AppDelegate : NSObject <NSApplicationDelegate>
-@property (strong) NSWindow *window;
+    @property (strong) NSWindow *window;
 @end
 
 @implementation AppDelegate
 - (void)applicationDidFinishLaunching: (NSNotification *)aNotification {
     NSRect frame = NSMakeRect (0, 0, 800, 600);
     self.window = [[NSWindow alloc] initWithContentRect: frame
-                                              styleMask: (NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable)
+                                              styleMask: (NSWindowStyleMaskTitled |
+                                                         NSWindowStyleMaskClosable |
+                                                         NSWindowStyleMaskResizable)
                                                 backing: NSBackingStoreBuffered
                                                   defer: NO];
     [self.window setTitle: @"AVX2 Custom Software Renderer"];
